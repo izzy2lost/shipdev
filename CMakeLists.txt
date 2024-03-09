@@ -16,8 +16,8 @@ add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/utf-8>)
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     include(CMake/automate-vcpkg.cmake)
 
-    set(VCPKG_TRIPLET x64-windows-static)
-    set(VCPKG_TARGET_TRIPLET x64-windows-static)
+    set(VCPKG_TRIPLET x64-windows)
+    set(VCPKG_TARGET_TRIPLET x64-windows)
 
     vcpkg_bootstrap()
     vcpkg_install_packages(zlib bzip2 libzip libpng sdl2 sdl2-net glew glfw3)

@@ -1010,7 +1010,7 @@ extern "C" void InitOTR() {
     LUS::WiiU::Init(appShortName);
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) and false // Some of the file stuff below doesn't work on UWP
     char* tempVar = getenv("TEMP");
     std::filesystem::path tempPath;
     try {
