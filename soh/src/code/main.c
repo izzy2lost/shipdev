@@ -9,7 +9,7 @@
 #include "soh/OTRGlobals.h"
 
 #include <libultraship/bridge.h>
-#include "soh/CrashHandlerExp.h"
+//#include "soh/CrashHandlerExp.h"
 
 s32 gScreenWidth = SCREEN_WIDTH;
 s32 gScreenHeight = SCREEN_HEIGHT;
@@ -44,14 +44,15 @@ void Main_LogSystemHeap(void) {
 }
 
 #ifdef _WIN32
-int SDL_main(int argc, char** argv)
+#include "SDL2/SDL_main.h"
+int main(int argc, char** argv)
 {
-    AllocConsole();
-    (void)freopen("CONIN$", "r", stdin);
-    (void)freopen("CONOUT$", "w", stdout);
-    (void)freopen("CONOUT$", "w", stderr);
+    //AllocConsole();
+    //(void)freopen("CONIN$", "r", stdin);
+    //(void)freopen("CONOUT$", "w", stdout);
+    //(void)freopen("CONOUT$", "w", stderr);
 #ifndef _DEBUG
-    ShowWindow(GetConsoleWindow(), SW_HIDE);
+    //ShowWindow(GetConsoleWindow(), SW_HIDE);
 #endif
 
 #else //_WIN32
@@ -62,7 +63,7 @@ int main(int argc, char** argv)
     GameConsole_Init();
     InitOTR();
     // TODO: Was moved to below InitOTR because it requires window to be setup. But will be late to catch crashes.
-    CrashHandlerRegisterCallback(CrashHandler_PrintSohData);
+    //CrashHandlerRegisterCallback(CrashHandler_PrintSohData);
     BootCommands_Init();
 
     Heaps_Alloc();
@@ -138,7 +139,8 @@ void Main(void* arg) {
     osCreateThread(&sGraphThread, 4, Graph_ThreadEntry, arg, sGraphStack + sizeof(sGraphStack), Z_PRIORITY_GRAPH);
     osStartThread(&sGraphThread);
     osSetThreadPri(0, Z_PRIORITY_SCHED);
-
+    
+    
     Graph_ThreadEntry(0);
 
     while (true) {

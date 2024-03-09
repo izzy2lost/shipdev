@@ -933,6 +933,7 @@ inline internal::platform::new_style_context::~new_style_context()
 
 inline HANDLE internal::platform::new_style_context::create()
 {
+#if false
     // This “hack” seems to be necessary for this code to work on windows XP.
     // Without it, dialogs do not show and close immediately. GetError()
     // returns 0 so I don’t know what causes this. I was not able to reproduce
@@ -957,6 +958,9 @@ inline HANDLE internal::platform::new_style_context::create()
     };
 
     return ::CreateActCtxA(&act_ctx);
+#else
+    return nullptr;
+#endif
 }
 #endif // _WIN32
 
@@ -1409,6 +1413,7 @@ inline int CALLBACK internal::file_dialog::bffcallback(HWND hwnd, UINT uMsg,
 #if PFD_HAS_IFILEDIALOG
 inline std::string internal::file_dialog::select_folder_vista(IFileDialog *ifd, bool force_path)
 {
+#if false
     std::string result;
 
     IShellItem *folder;
@@ -1478,6 +1483,9 @@ inline std::string internal::file_dialog::select_folder_vista(IFileDialog *ifd, 
     ifd->Release();
 
     return result;
+#else
+    return nullptr;
+#endif
 }
 #endif
 #endif
