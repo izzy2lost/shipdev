@@ -86,9 +86,5 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         (char*) "example",
     NULL
     };
-
-    
-    winrt::init_apartment();
     return SDL_WinRTRunApp(SDL_main, args);
-    winrt::uninit_apartment();
 }
