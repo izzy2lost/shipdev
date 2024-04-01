@@ -66,6 +66,13 @@ using namespace winrt::Windows::Storage;
 #include "../libultraship/src/graphic/Fast3D/wininfo.h"
 
 #include "SDL2/SDL.h"
+
+// Track width/height for SDL window creation
+static int width, height;
+
+static float scale;
+
+
 void* WinInfo::getCurrentWindow() {
     void* ptr = nullptr;
     while (ptr == nullptr) {
@@ -76,15 +83,33 @@ void* WinInfo::getCurrentWindow() {
     return ptr;
 }
 
+int WinInfo::getHostWidth() {
+    return width;
+}
+
+int WinInfo::getHostHeight() {
+    return height;
+}
+
 std::string WinInfo::getSavePath() {
     return winrt::to_string(ApplicationData::Current().LocalFolder().Path());
 }
 
 int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-    char* args[] = {
-        (char*) "example",
-    NULL
-    };
-    return SDL_WinRTRunApp(SDL_main, args);
+    // Initialize height/width for later usage
+    HdmiDisplayInformation hdi = HdmiDisplayInformation::GetForCurrentView();
+    if (hdi)
+    {
+        width = hdi.GetCurrentDisplayMode().ResolutionWidthInRawPixels();
+        height = hdi.GetCurrentDisplayMode().ResolutionHeightInRawPixels();
+        scale = ((float)width / 1920.0f) * 1.75f;
+    }
+    else {
+        width = 1920;
+        height = 1080;
+        scale = 1.0;
+    }
+
+    return SDL_WinRTRunApp(SDL_main, nullptr);
 }

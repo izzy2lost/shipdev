@@ -147,6 +147,7 @@ Acmd* AudioSynth_Update(Acmd* cmdStart, s32* cmdCnt, s16* aiStart, s32 aiBufLen)
 
     aiBufP = aiStart;
     gAudioContext.curLoadedBook = NULL;
+
     for (i = gAudioContext.audioBufferParameters.updatesPerFrame; i > 0; i--) {
         if (i == 1) {
             chunkLen = aiBufLen;
@@ -166,6 +167,7 @@ Acmd* AudioSynth_Update(Acmd* cmdStart, s32* cmdCnt, s16* aiStart, s32 aiBufLen)
 
         cmdP = AudioSynth_DoOneAudioUpdate(aiBufP, chunkLen, cmdP, gAudioContext.audioBufferParameters.updatesPerFrame - i);
         aiBufLen -= chunkLen;
+
         aiBufP += chunkLen * 2;
     }
 
@@ -888,6 +890,17 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                     sampleDataStartPad = (uintptr_t)sampleData & 0xF;
                     aligned = ALIGN16((nFramesToDecode * frameSize) + 16);
                     addr = DMEM_COMPRESSED_ADPCM_DATA - aligned;
+
+                    // Note the following code was written to address rare crashes on certain platforms. It could definitely use another set of eyes
+                    // Violation protection: in rare instances the aligned value exceeds the sample + padding.
+                    int requested = ((sampleDataOffset - sampleDataStart) + (nFramesToDecode * frameSize + 16)) & ~0XF;
+                    int fontsize = audioFontSample->size + 16;
+
+                    if (requested >= fontsize) {
+                        aligned = ALIGN16(audioFontSample->size - sampleDataOffset);
+                    }
+                    // End violation protection
+
                     aLoadBuffer(cmd++, sampleData - sampleDataStartPad, addr, aligned);
                 } else {
                     nSamplesToDecode = 0;

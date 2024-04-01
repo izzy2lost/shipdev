@@ -442,6 +442,9 @@ bool OTRGlobals::HasOriginal() {
 }
 
 uint32_t OTRGlobals::GetInterpolationFPS() {
+    // Locked to panel refresh for now
+    return LUS::Context::GetInstance()->GetWindow()->GetCurrentRefreshRate();
+
     if (LUS::Context::GetInstance()->GetWindow()->GetWindowBackend() == LUS::WindowBackend::DX11) {
         return CVarGetInteger("gInterpolationFPS", 20);
     }

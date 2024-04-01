@@ -28,7 +28,7 @@ void BootCommands_Init()
     CVarClear("gBetterDebugWarpScreenMQModeScene");
     CVarClear("gCheatEasyPauseBufferLastInputs");
     CVarClear("gCheatEasyPauseBufferTimer");
-#if defined(__SWITCH__) || defined(__WIIU__) || true
+#if defined(__SWITCH__) || defined(__WIIU__) || 1
     CVarRegisterInteger("gControlNav", 1); // always enable controller nav on switch/wii u
 #endif
 }
