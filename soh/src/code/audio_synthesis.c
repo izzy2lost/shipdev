@@ -1,3 +1,6 @@
+#pragma GCC push_options
+#pragma GCC optimize("Od")
+
 #include <libultraship/libultra.h>
 #include "global.h"
 #include "soh/mixer.h"
@@ -893,11 +896,12 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
 
                     // Note the following code was written to address rare crashes on certain platforms. It could definitely use another set of eyes
                     // Violation protection: in rare instances the aligned value exceeds the sample + padding.
-                    int requested = ((sampleDataOffset - sampleDataStart) + (nFramesToDecode * frameSize + 16)) & ~0XF;
-                    int fontsize = audioFontSample->size + 16;
+                    int requested = (sampleDataOffset + sampleDataStart) + (aligned & ~0XF); // loadbuffer rounds down 16
+                    int fontsize = ALIGN16(audioFontSample->size + 16);
 
                     if (requested >= fontsize) {
-                        aligned = ALIGN16(audioFontSample->size - sampleDataOffset);
+                        // Clean up alignment
+                        aligned = ALIGN16((audioFontSample->size - (sampleDataOffset + sampleDataStart)));
                     }
                     // End violation protection
 
@@ -1081,6 +1085,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     return cmd;
 }
 
+
 Acmd* AudioSynth_FinalResample(Acmd* cmd, NoteSynthesisState* synthState, s32 count, u16 pitch, u16 inpDmem,
                                s32 resampleFlags) {
     if (pitch == 0) {
@@ -1252,3 +1257,4 @@ Acmd* AudioSynth_NoteApplyHeadsetPanEffects(Acmd* cmd, NoteSubEu* noteSubEu, Not
     aAddMixer(cmd++, ALIGN64(bufLen), DMEM_NOTE_PAN_TEMP, dest);
     return cmd;
 }
+#pragma GCC pop_options
