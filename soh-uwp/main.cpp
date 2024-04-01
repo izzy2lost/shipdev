@@ -67,9 +67,10 @@ using namespace winrt::Windows::Storage;
 
 #include "SDL2/SDL.h"
 
-// Track width/height for SDL window creation
+// Window state vars
 static int width, height;
 
+static double refreshRate;
 static float scale;
 
 
@@ -91,6 +92,10 @@ int WinInfo::getHostHeight() {
     return height;
 }
 
+double WinInfo::getHostRefresh() {
+    return refreshRate;
+}
+
 std::string WinInfo::getSavePath() {
     return winrt::to_string(ApplicationData::Current().LocalFolder().Path());
 }
@@ -103,6 +108,7 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     {
         width = hdi.GetCurrentDisplayMode().ResolutionWidthInRawPixels();
         height = hdi.GetCurrentDisplayMode().ResolutionHeightInRawPixels();
+        refreshRate = hdi.GetCurrentDisplayMode().RefreshRate();
         scale = ((float)width / 1920.0f) * 1.75f;
     }
     else {
