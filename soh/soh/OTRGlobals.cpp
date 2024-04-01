@@ -59,6 +59,7 @@
 
 #include <Fast3D/gfx_pc.h>
 #include <Fast3D/gfx_rendering_api.h>
+#include "../graphic/Fast3D/wininfo.h"
 
 #ifdef __APPLE__
 #include <SDL_scancode.h>
@@ -413,18 +414,15 @@ bool OTRGlobals::HasOriginal() {
 }
 
 uint32_t OTRGlobals::GetInterpolationFPS() {
-    // Locked to panel refresh for now
-    return LUS::Context::GetInstance()->GetWindow()->GetCurrentRefreshRate();
-
     if (LUS::Context::GetInstance()->GetWindow()->GetWindowBackend() == LUS::WindowBackend::DX11) {
         return CVarGetInteger("gInterpolationFPS", 20);
     }
 
     if (CVarGetInteger("gMatchRefreshRate", 0)) {
-        return LUS::Context::GetInstance()->GetWindow()->GetCurrentRefreshRate();
+        return (int) WinInfo::getHostRefresh(); 
     }
 
-    return std::min<uint32_t>(LUS::Context::GetInstance()->GetWindow()->GetCurrentRefreshRate(), CVarGetInteger("gInterpolationFPS", 20));
+    return std::min<uint32_t>((int)WinInfo::getHostRefresh(), CVarGetInteger("gInterpolationFPS", 20));
 }
 
 struct ExtensionEntry {
