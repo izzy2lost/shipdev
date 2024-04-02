@@ -890,20 +890,28 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         return cmd;
                     }
 
+
                     sampleDataStartPad = (uintptr_t)sampleData & 0xF;
                     aligned = ALIGN16((nFramesToDecode * frameSize) + 16);
-                    addr = DMEM_COMPRESSED_ADPCM_DATA - aligned;
 
-                    // Note the following code was written to address rare crashes on certain platforms. It could definitely use another set of eyes
-                    // Violation protection: in rare instances the aligned value exceeds the sample + padding.
-                    int requested = (sampleDataOffset + sampleDataStart) + (aligned & ~0XF); // loadbuffer rounds down 16
-                    int fontsize = ALIGN16(audioFontSample->size + 16);
+                    // TODO: If anyone can determine why the "corrupted" frame is generated PLEASE let me know
+                    //       99% of the time everything works fine but occasionally frame offsets appear that
+                    //       trigger an access violation.
+                    //
+                    //       The below approach isn't particularly aggressive but regularly hits and makes execution stable.
+                    //       This leads me to think that the code above is regularly leaking over into the padding data of
+                    //       other samples and you need to get lucky that samples memory addresses line up near each other.
+                    //       That might explain why sometimes it runs stable but other times it crashes quick.
+                    
+                    // Safe Mode Audio: Simpler violation check, just back off a frame if it escaped bounds
+                    int requested = sampleDataStart + sampleDataOffset + (aligned & ~0XF); // aligned is rounded down during load op
 
-                    if (requested >= fontsize) {
-                        // Clean up alignment
-                        aligned = ALIGN16((audioFontSample->size - (sampleDataOffset + sampleDataStart)));
+                    if (requested > audioFontSample->size + 16) {
+                        nFramesToDecode--;
+                        aligned = ALIGN16((nFramesToDecode * frameSize) + 16);
                     }
-                    // End violation protection
+
+                    addr = DMEM_COMPRESSED_ADPCM_DATA - aligned;
 
                     aLoadBuffer(cmd++, sampleData - sampleDataStartPad, addr, aligned);
                 } else {
