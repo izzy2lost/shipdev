@@ -871,14 +871,14 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         s5 = samplesLenAdjusted;
                         goto skip;
                     case CODEC_REVERB:
+                        goto skip;
                         break;
                 }
 
                 if (nFramesToDecode != 0) {
                     frameIndex = (synthState->samplePosInt + skipInitialSamples - nFirstFrameSamplesToIgnore) / 16;
                     sampleDataOffset = frameIndex * frameSize;
-                    if (audioFontSample->medium == MEDIUM_RAM) 
-                    {
+                    if (audioFontSample->medium == MEDIUM_RAM) {
                         sampleData = (u8*)(sampleDataStart + sampleDataOffset + sampleAddr);
                     } else if (audioFontSample->medium == MEDIUM_UNK) {
                         return cmd;
@@ -892,25 +892,17 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         return cmd;
                     }
 
-
                     sampleDataStartPad = (uintptr_t)sampleData & 0xF;
                     aligned = ALIGN16((nFramesToDecode * frameSize) + 16);
-                    addr = DMEM_COMPRESSED_ADPCM_DATA - aligned; // Note: This must maintain full aligned width for playback
+                    addr = DMEM_COMPRESSED_ADPCM_DATA - aligned;
 
-                    // Cap ALIGN16 window to actual size of sample to avoid access violations
-                    alignDiff = 0;
-                    if ((sampleDataOffset + aligned) > audioFontSample->size + 16) {
-                        int32_t capped = (audioFontSample->size + 16) - sampleDataOffset;
-                        alignDiff = aligned - capped;
-                        aligned = capped;
+                    if (audioFontSample->medium != MEDIUM_RAM) {
+                        aLoadBuffer(cmd++, sampleData - sampleDataStartPad, addr, aligned);
+                    // RAM samples do not need rounded alignment value for src bytes otherwise access violations ahoy!
+                    } else {
+                        aLoadBufferNoRound(cmd++, sampleData - sampleDataStartPad, addr, (nFramesToDecode * frameSize + 16));
                     }
 
-                    aLoadBuffer(cmd++, sampleData - sampleDataStartPad, addr, aligned);
-
-                    // Fill gap with zeros so we don't play any junk left behind
-                    if (alignDiff > 0) {
-                        aFillBuffer(cmd++, addr + aligned, alignDiff);
-                    }
                 } else {
                     nSamplesToDecode = 0;
                     sampleDataStartPad = 0;
