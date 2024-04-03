@@ -33,6 +33,7 @@
 #undef aUnkCmd19
 
 void aClearBufferImpl(uint16_t addr, int nbytes);
+void aFillBufferImpl(const void* dest_addr, uint16_t nbytes);
 void aLoadBufferImpl(const void* source_addr, uint16_t dest_addr, uint16_t nbytes);
 void aSaveBufferImpl(uint16_t source_addr, int16_t* dest_addr, uint16_t nbytes);
 void aLoadADPCMImpl(int num_entries_times_16, const int16_t* book_source_addr);
@@ -61,6 +62,7 @@ void aUnkCmd19Impl(uint8_t f, uint16_t count, uint16_t out_addr, uint16_t in_add
     do {                    \
     } while (0)
 #define aClearBuffer(pkt, d, c) aClearBufferImpl(d, c)
+#define aFillBuffer(pkt, d, c) aFillBufferImpl(d, c)
 #define aLoadBuffer(pkt, s, d, c) aLoadBufferImpl(s, d, c)
 #define aSaveBuffer(pkt, s, d, c) aSaveBufferImpl(s, d, c)
 #define aLoadADPCM(pkt, c, d) aLoadADPCMImpl(c, d)
