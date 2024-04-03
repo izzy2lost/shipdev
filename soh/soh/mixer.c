@@ -99,6 +99,10 @@ void aClearBufferImpl(uint16_t addr, int nbytes) {
     memset(BUF_U8(addr), 0, nbytes);
 }
 
+void aFillBufferImpl(uint16_t dest_addr, uint16_t samples) {
+    memset(BUF_U8(dest_addr), 0, samples);
+}
+
 void aLoadBufferImpl(const void *source_addr, uint16_t dest_addr, uint16_t nbytes) {
     memcpy(BUF_U8(dest_addr), source_addr, ROUND_DOWN_16(nbytes));
 }

@@ -259,7 +259,7 @@ void DrawSettingsMenu() {
 
         if (ImGui::BeginMenu("Graphics")) {
         #ifndef __APPLE__
-            if (UIWidgets::EnhancementSliderFloat("Internal Resolution: %d %%", "##IMul", "gInternalResolution", 0.5f, 2.0f, "", 1.0f, true)) {
+            if (UIWidgets::EnhancementSliderFloat("Internal Resolution: %d %%", "##IMul", "gInternalResolution", 0.05f, 2.0f, "", 1.0f, true)) {
                 LUS::Context::GetInstance()->GetWindow()->SetResolutionMultiplier(CVarGetFloat("gInternalResolution", 1));
             };
             UIWidgets::Tooltip("Multiplies your output resolution by the value inputted, as a more intensive but effective form of anti-aliasing");
