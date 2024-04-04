@@ -422,7 +422,7 @@ uint32_t OTRGlobals::GetInterpolationFPS() {
         return (int) WinInfo::getHostRefresh(); 
     }
 
-    return std::min<uint32_t>((int)WinInfo::getHostRefresh(), CVarGetInteger("gInterpolationFPS", 20));
+    return std::min<uint32_t>((int)WinInfo::getHostRefresh(), CVarGetInteger("gInterpolationFPS", 30));
 }
 
 struct ExtensionEntry {

@@ -136,6 +136,8 @@ namespace SohGui {
         if (gui->GetMenuBar() && !gui->GetMenuBar()->IsVisible()) {
 #if defined(__SWITCH__) || defined(__WIIU__)
             gui->GetGameOverlay()->TextDrawNotification(30.0f, true, "Press - to access enhancements menu");
+#elif defined(__TODO__) || true
+            gui->GetGameOverlay()->TextDrawNotification(30.0f, true, "Press Select to access enhancements menu");
 #else
             gui->GetGameOverlay()->TextDrawNotification(30.0f, true, "Press F1 to access enhancements menu");
 #endif

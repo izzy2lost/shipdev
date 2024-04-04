@@ -16,5 +16,13 @@
     <AppxShowAllApps>False</AppxShowAllApps>
     <AppxBuildConfigurationSelection>x64</AppxBuildConfigurationSelection>
     <PackageOptionalProjectsInIdeBuilds>False</PackageOptionalProjectsInIdeBuilds>
+    <Source>C:\Users\danwo\Documents\root-asset.png</Source>
+    <SmallTileSource>C:\Users\danwo\Documents\root-asset.png</SmallTileSource>
+    <MediumTileSource>C:\Users\danwo\Documents\root-asset.png</MediumTileSource>
+    <WideTileSource>C:\Users\danwo\Documents\root-asset.png</WideTileSource>
+    <LargeTileSource>C:\Users\danwo\Documents\root-asset.png</LargeTileSource>
+    <AppIconSource>C:\Users\danwo\Documents\root-asset.png</AppIconSource>
+    <PackageLogoSource>C:\Users\danwo\Documents\root-asset.png</PackageLogoSource>
+    <BadgeLogoSource>C:\Users\danwo\Documents\root-asset.png</BadgeLogoSource>
   </PropertyGroup>
 </Project>
