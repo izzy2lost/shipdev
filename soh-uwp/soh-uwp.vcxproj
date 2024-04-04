@@ -220,8 +220,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>c:\lib\opengl32.lib;c:\lib\libgallium_wgl.lib;c:\lib\z.lib;StormLib.lib;bz2.lib;C:\dev\hdr\SDL-uwp-gl\VisualC-WinRT\x64\Debug\SDL-UWP\SDL2.lib;SDL2_netd.lib;ImGui.lib;StrHash64.lib;tinyxml2.lib;zip.lib;zlibd.lib;libpng16d.lib;libultraship.lib;OTRExporter.lib;ZAPDLib.lib;ZAPDUtils.lib;soh.lib;d3d12.lib;dxgi.lib;dxguid.lib;onecore.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\dev\uwp\Shipwright\build_clean\libultraship\extern\StormLib\Debug\;C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\debug\lib;C:\dev\uwp\Shipwright\build_clean\libultraship\extern\Debug;C:\dev\uwp\Shipwright\x64\Debug;%(AdditionalLibraryDirectories);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>c:\lib\opengl32.lib;c:\lib\libgallium_wgl.lib;c:\lib\z.lib;StormLib.lib;bz2.lib;C:\dev\hdr\SDL-uwp-gl\VisualC-WinRT\x64\Debug\SDL-UWP\SDL2.lib;SDL2_net.lib;ImGui.lib;StrHash64.lib;tinyxml2.lib;zip.lib;zlibd.lib;libpng16d.lib;libultraship.lib;OTRExporter.lib;ZAPDLib.lib;ZAPDUtils.lib;soh.lib;d3d12.lib;dxgi.lib;dxguid.lib;onecore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\dev\uwp\Shipwright\build_foxtrot\libultraship\extern\StormLib\Debug\;C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\debug\lib;C:\dev\uwp\Shipwright\build_foxtrot\libultraship\extern\Debug;C:\dev\uwp\Shipwright\x64\Debug;%(AdditionalLibraryDirectories);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <AdditionalOptions>
@@ -245,17 +245,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <AdditionalDependencies>c:\lib\opengl32.lib;c:\lib\libgallium_wgl.lib;c:\lib\z.lib;StormLib.lib;bz2.lib;C:\dev\hdr\SDL-uwp-gl\VisualC-WinRT\x64\Release\SDL-UWP\SDL2.lib;SDL2_net.lib;ImGui.lib;StrHash64.lib;C:\dev\uwp\tinyxml2\build\Release\tinyxml2.lib;zip.lib;zlib.lib;libpng16.lib;libultraship.lib;OTRExporter.lib;ZAPDLib.lib;ZAPDUtils.lib;soh.lib;dxgi.lib;dxguid.lib;onecore.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\dev\uwp\Shipwright\build_clean\libultraship\extern\StormLib\Release\;C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\lib;C:\dev\uwp\Shipwright\build_clean\libultraship\extern\Release;C:\dev\uwp\Shipwright\x64\Release;%(AdditionalLibraryDirectories);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vccorlib.lib;msvcrt.lib;c:\lib\opengl32.lib;c:\lib\libgallium_wgl.lib;c:\lib\z.lib;StormLib.lib;bz2.lib;C:\dev\hdr\SDL-uwp-gl\VisualC-WinRT\x64\Release\SDL-UWP\SDL2.lib;SDL2_net.lib;ImGui.lib;StrHash64.lib;C:\dev\uwp\tinyxml2\build\Release\tinyxml2.lib;zip.lib;zlib.lib;libpng16.lib;libultraship.lib;OTRExporter.lib;ZAPDLib.lib;ZAPDUtils.lib;soh.lib;dxgi.lib;dxguid.lib;onecore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\dev\uwp\Shipwright\build_foxtrot\libultraship\extern\StormLib\Release\;C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\lib;C:\dev\uwp\Shipwright\build_foxtrot\libultraship\extern\Release;C:\dev\uwp\Shipwright\x64\Release;%(AdditionalLibraryDirectories);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
       <GenerateWindowsMetadata>true</GenerateWindowsMetadata>
-      <StackReserveSize>
-      </StackReserveSize>
-      <StackCommitSize>
-      </StackCommitSize>
-      <HeapReserveSize>
-      </HeapReserveSize>
-      <HeapCommitSize>
-      </HeapCommitSize>
+      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -266,7 +259,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <CompileAsWinRT>true</CompileAsWinRT>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -293,67 +286,72 @@
     <Import Project="$(VSINSTALLDIR)\Common7\IDE\Extensions\Microsoft\VsGraphics\ShaderGraphContentTask.targets" />
   </ImportGroup>
   <ItemGroup>
-    <Content Include="C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\bin\bz2.dll">
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\bin\bz2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\bin\SDL2.dll">
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\bin\SDL2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\bin\SDL2_net.dll">
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\bin\SDL2_net.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\bin\bz2-1.dll">
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\debug\bin\SDL2_netd.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\bin\glfw3.dll">
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\bin\bz2-1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\bin\glew32.dll">
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\bin\glfw3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\debug\bin\glew32d.dll">
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\bin\glew32.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\debug\bin\libpng16d.dll">
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\debug\bin\glew32d.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\bin\zip.dll">
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\debug\bin\libpng16d.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\bin\zlib.dll">
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\bin\zip.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\bin\zlib1.dll">
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\bin\zlib.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\debug\bin\zlibd.dll">
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\bin\zlib1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\dev\uwp\Shipwright\build_clean\vcpkg\installed\x64-windows\bin\libpng16.dll">
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\debug\bin\zlibd.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="C:\dev\uwp\Shipwright\build_foxtrot\vcpkg\installed\x64-windows\bin\libpng16.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -387,15 +385,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="$(ProjectDir)\..\soh.otr">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
-
-
   <ItemGroup>
     <None Include="soh-uwp_TemporaryKey.pfx" />
   </ItemGroup>
