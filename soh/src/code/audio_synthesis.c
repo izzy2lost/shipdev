@@ -1,6 +1,3 @@
-#pragma GCC push_options
-#pragma GCC optimize("Od")
-
 #include <libultraship/libultra.h>
 #include "global.h"
 #include "soh/mixer.h"
@@ -1254,4 +1251,3 @@ Acmd* AudioSynth_NoteApplyHeadsetPanEffects(Acmd* cmd, NoteSubEu* noteSubEu, Not
     aAddMixer(cmd++, ALIGN64(bufLen), DMEM_NOTE_PAN_TEMP, dest);
     return cmd;
 }
-#pragma GCC pop_options
