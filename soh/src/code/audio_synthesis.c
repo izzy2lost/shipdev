@@ -714,7 +714,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     s16* filter;
     s32 bookOffset;
     s32 finished;
-    s32 aligned;
+    s32 aligned, ramAlign;
     s16 addr;
     u16 unused;
 
@@ -803,6 +803,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                 noteFinished = false;
                 restart = false;
                 phi_s4 = 0;
+                endOfSample = false;
 
                 nFirstFrameSamplesToIgnore = synthState->samplePosInt & 0xF;
                 nSamplesUntilLoopEnd = loopEndPos - synthState->samplePosInt;
@@ -897,7 +898,18 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         aLoadBuffer(cmd++, sampleData - sampleDataStartPad, addr, aligned);
                     // RAM samples do not need rounded alignment value for src bytes otherwise access violations ahoy!
                     } else {
-                        aLoadBufferNoRound(cmd++, sampleData - sampleDataStartPad, addr, (nFramesToDecode * frameSize + 16));
+                        /*
+                         *  Probably a cleaner way of handling this but 16 padding needs to scale down towards end of
+                         *  buffer. Example:
+                         *
+                         *  Final frame with one sample remaining:
+                         *          S
+                         *  DDDDDDDDDPPPPPPPPPPPPPPPP
+                         *
+                         *   This should return a padding of 17, not 25
+                        */
+                        ramAlign = min((nFramesToDecode * frameSize) + 16, (audioFontSample->size + 16) - (sampleDataOffset + sampleDataStart));
+                        aLoadBufferNoRound(cmd++, sampleData - sampleDataStartPad, addr, ramAlign);
                     }
 
                 } else {
