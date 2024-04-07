@@ -32,6 +32,7 @@
 #undef aUnkCmd3
 #undef aUnkCmd19
 
+void aBackfillBufferImpl(uint16_t addr, int nbytes);
 void aClearBufferImpl(uint16_t addr, int nbytes);
 void aLoadBufferImpl(const void* source_addr, uint16_t dest_addr, uint16_t nbytes);
 void aLoadBufferNoRoundImpl(const void* source_addr, uint16_t dest_addr, uint16_t nbytes);
@@ -61,6 +62,7 @@ void aUnkCmd19Impl(uint8_t f, uint16_t count, uint16_t out_addr, uint16_t in_add
 #define aSegment(pkt, s, b) \
     do {                    \
     } while (0)
+#define aBackfillBuffer(d, c) aBackfillBufferImpl(d, c)
 #define aClearBuffer(pkt, d, c) aClearBufferImpl(d, c)
 #define aLoadBuffer(pkt, s, d, c) aLoadBufferImpl(s, d, c)
 #define aLoadBufferNoRound(pkt, s, d, c) aLoadBufferNoRoundImpl(s, d, c)

@@ -665,6 +665,7 @@ Acmd* AudioSynth_DoOneAudioUpdate(s16* aiBuf, s32 aiBufLen, Acmd* cmd, s32 updat
     return cmd;
 }
 
+// yanked from mixer, maybe make it public?
 Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisState* synthState, s16* aiBuf,
                              s32 aiBufLen, Acmd* cmd, s32 updateIndex) {
     s32 pad1[3];
@@ -803,7 +804,6 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                 noteFinished = false;
                 restart = false;
                 phi_s4 = 0;
-                endOfSample = false;
 
                 nFirstFrameSamplesToIgnore = synthState->samplePosInt & 0xF;
                 nSamplesUntilLoopEnd = loopEndPos - synthState->samplePosInt;
@@ -869,7 +869,6 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         s5 = samplesLenAdjusted;
                         goto skip;
                     case CODEC_REVERB:
-                        goto skip;
                         break;
                 }
 
@@ -906,10 +905,11 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                          *          S
                          *  DDDDDDDDDPPPPPPPPPPPPPPPP
                          *
-                         *   This should return a padding of 17, not 25
+                         *  This should return an "align" of 17, not 25
                         */
                         ramAlign = min((nFramesToDecode * frameSize) + 16, (audioFontSample->size + 16) - (sampleDataOffset + sampleDataStart));
                         aLoadBufferNoRound(cmd++, sampleData - sampleDataStartPad, addr, ramAlign);
+                        aBackfillBuffer(addr + ramAlign, aligned - ramAlign); // Dunno if needed but I make believe this fixes artifacts
                     }
 
                 } else {
