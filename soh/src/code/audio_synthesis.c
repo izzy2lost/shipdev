@@ -905,11 +905,29 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                          *          S
                          *  DDDDDDDDDPPPPPPPPPPPPPPPP
                          *
-                         *  This should return an "align" of 17, not 25
+                         * For unknown reasons UWP is blowing up when reading RAM samples outside the allocation for the sample itself
+                         * so the below code locks bounds to the actual size and restores any missing padding data.  Normally we'd
+                         * return an align of 25 for the above example but it needs to be 1.
                         */
-                        ramAlign = min((nFramesToDecode * frameSize) + 16, (audioFontSample->size + 16) - (sampleDataOffset + sampleDataStart));
+
+                        ramAlign = min((nFramesToDecode * frameSize) + 16, (audioFontSample->size) - (sampleDataOffset - sampleDataStartPad + sampleDataStart));
+
+                        // Debugging code for sample offsets
+                        /*
+                        uint8_t* beginning = (u8*)(sampleData - sampleDataStartPad);
+                        s32 end = sampleDataOffset - sampleDataStartPad + sampleDataStart + ramAlign;
+
+                        bool entryError = beginning < audioFontSample->sampleAddr;
+                        bool exitError = end > audioFontSample->size;
+
+                        if (entryError || exitError) {
+                            // Bad mojo baby!
+                            ramAlign = ramAlign;  // No-op cmd to put a breakpoint on
+                        }
+                        */
+
                         aLoadBufferNoRound(cmd++, sampleData - sampleDataStartPad, addr, ramAlign);
-                        aBackfillBuffer(addr + ramAlign, aligned - ramAlign); // Dunno if needed but I make believe this fixes artifacts
+                        aBackfillBuffer(addr + ramAlign, aligned - ramAlign); // Dunno if needed but I make believe this prevents artifacts
                     }
 
                 } else {

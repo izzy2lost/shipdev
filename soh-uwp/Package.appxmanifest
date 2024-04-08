@@ -15,7 +15,7 @@
   <Identity
     Name="uwpSOH"
     Publisher="CN=datboi"
-    Version="1.1.2.0" />
+    Version="1.1.5.0" />
 
   <mp:PhoneIdentity PhoneProductId="0587b567-7771-46ca-a4e2-0ec8ef4343c0" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
