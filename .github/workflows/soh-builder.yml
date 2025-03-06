@@ -22,8 +22,8 @@ jobs:
       BuildMode: SideLoadOnly
       AppxBundle: Never
       CMakeGenerator: Ninja
-      VCPKG_ROOT: D:/a/vcpkg
-      VCPKG_TRIPLET: x64-uwp  # Set correct UWP triplet
+      VCPKG_INSTALLATION_ROOT: C:/vcpkg  # Use system-installed Vcpkg
+      VCPKG_TRIPLET: x64-uwp
       SourceDir: "${{ github.workspace }}/soh-uwp"
       BuildDir: "${{ github.workspace }}/build-uwp"
       PackageOutputRootDir: "${{ github.workspace }}/AppPackages"
@@ -55,9 +55,7 @@ jobs:
 
       - name: Install Vcpkg Dependencies
         run: |
-          git clone https://github.com/microsoft/vcpkg.git "$env:VCPKG_ROOT"
-          & "$env:VCPKG_ROOT/bootstrap-vcpkg.bat"
-          & "$env:VCPKG_ROOT/vcpkg" install --triplet $env:VCPKG_TRIPLET
+          & "$env:VCPKG_INSTALLATION_ROOT/vcpkg" install --triplet $env:VCPKG_TRIPLET
         shell: pwsh
 
       - name: Configure CMake
@@ -66,17 +64,10 @@ jobs:
           cmake -S "$env:SourceDir" -B "$env:BuildDir" -G Ninja `
             -DCMAKE_MAKE_PROGRAM=ninja `
             -DCMAKE_BUILD_TYPE=$env:Configuration `
-            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
             -DVCPKG_TARGET_TRIPLET=$env:VCPKG_TRIPLET `
             -DCMAKE_C_COMPILER_LAUNCHER=ccache `
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-        shell: pwsh
-
-      - name: Generate Self-Signed Certificate
-        id: generate_cert
-        run: |
-          $cert = New-SelfSignedCertificate -CertStoreLocation "Cert:\CurrentUser\My" -Subject "CN=SOH_Cert" -KeyAlgorithm RSA -KeyLength 2048 -Provider "Microsoft Enhanced RSA and AES Cryptographic Provider" -KeyExportPolicy Exportable -NotAfter (Get-Date).AddYears(1) -Type CodeSigningCert
-          echo "THUMBPRINT=$($cert.Thumbprint)" >> $env:GITHUB_ENV
         shell: pwsh
 
       - name: Build UWP App
@@ -96,6 +87,12 @@ jobs:
           mv "$env:BuildDir/gamecontrollerdb.txt" soh-uwp/gamecontrollerdb.txt
           mv "$env:BuildDir/x64/Release/assets" soh-uwp
         shell: pwsh
+
+      - name: Download soh.otr
+        uses: actions/download-artifact@v4
+        with:
+          name: soh.otr
+          path: soh-uwp
 
       - name: Create Archive
         run: |
