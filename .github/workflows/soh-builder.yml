@@ -97,12 +97,6 @@ jobs:
           mv "$env:BuildDir/x64/Release/assets" soh-uwp
         shell: pwsh
 
-      - name: Download soh.otr
-        uses: actions/download-artifact@v3
-        with:
-          name: soh.otr
-          path: soh-uwp
-
       - name: Create Archive
         run: |
           Compress-Archive -Path "soh-uwp\*" -DestinationPath "$env:PackageOutputRootDir\SOH_Archive.zip"
