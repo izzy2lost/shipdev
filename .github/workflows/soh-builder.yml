@@ -23,7 +23,8 @@ jobs:
       AppxBundle: Never
       CMakeGenerator: Ninja
       VCPKG_ROOT: D:/a/vcpkg
-      SourceDir: "${{ github.workspace }}/"
+      VCPKG_TRIPLET: x64-uwp  # Set correct UWP triplet
+      SourceDir: "${{ github.workspace }}/soh-uwp"
       BuildDir: "${{ github.workspace }}/build-uwp"
       PackageOutputRootDir: "${{ github.workspace }}/AppPackages"
       PackageOutputDir: "${{ github.workspace }}/AppPackages/${{ github.event.inputs.package_name }}_${{ github.event.inputs.tag_name }}"
@@ -52,15 +53,23 @@ jobs:
       - name: Setup MSVC Developer Command Prompt
         uses: ilammy/msvc-dev-cmd@v1
 
+      - name: Install Vcpkg Dependencies
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git "$env:VCPKG_ROOT"
+          & "$env:VCPKG_ROOT/bootstrap-vcpkg.bat"
+          & "$env:VCPKG_ROOT/vcpkg" install --triplet $env:VCPKG_TRIPLET
+        shell: pwsh
+
       - name: Configure CMake
         run: |
           set $env:PATH="$env:USERPROFILE/.cargo/bin;$env:PATH"
           cmake -S "$env:SourceDir" -B "$env:BuildDir" -G Ninja `
             -DCMAKE_MAKE_PROGRAM=ninja `
             -DCMAKE_BUILD_TYPE=$env:Configuration `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -DVCPKG_TARGET_TRIPLET=$env:VCPKG_TRIPLET `
             -DCMAKE_C_COMPILER_LAUNCHER=ccache `
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache `
-            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         shell: pwsh
 
       - name: Generate Self-Signed Certificate
@@ -89,7 +98,7 @@ jobs:
         shell: pwsh
 
       - name: Download soh.otr
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: soh.otr
           path: soh-uwp
