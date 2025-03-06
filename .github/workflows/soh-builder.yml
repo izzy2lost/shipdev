@@ -14,42 +14,53 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2022
+    runs-on: ${{ (vars.WINDOWS_RUNNER && fromJSON(vars.WINDOWS_RUNNER)) || 'windows-latest' }}
 
     env:
       Platform: x64
       Configuration: Release
       BuildMode: SideLoadOnly
       AppxBundle: Never
-      CMakeGenerator: "Visual Studio 17 2022"
-      CMakeToolchain: "${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      CMakeGenerator: Ninja
+      VCPKG_ROOT: D:/a/vcpkg
       SourceDir: "${{ github.workspace }}/soh-uwp"
-      BuildDir: "${{ github.workspace }}/build"
+      BuildDir: "${{ github.workspace }}/build-uwp"
       PackageOutputRootDir: "${{ github.workspace }}/AppPackages"
       PackageOutputDir: "${{ github.workspace }}/AppPackages/${{ github.event.inputs.package_name }}_${{ github.event.inputs.tag_name }}"
 
     steps:
+      - name: Install Dependencies
+        if: ${{ !vars.WINDOWS_RUNNER }}
+        run: |
+          choco install ninja
+          Remove-Item -Path "C:\ProgramData\Chocolatey\bin\ccache.exe" -Force -ErrorAction SilentlyContinue
+        shell: pwsh
+
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: true
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
-      - name: Install CMake & Ninja
-        uses: lukka/get-cmake@latest
+      - name: Setup CCache
+        uses: dcvz/ccache-action@27b9f33213c0079872f064f6b6ba0233dfa16ba2
+        with:
+          key: ${{ runner.os }}-ccache
 
-      - name: Install vcpkg Dependencies
-        run: |
-          vcpkg integrate install
-        shell: pwsh
+      - name: Setup MSVC Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Configure CMake
         run: |
-          cmake -B "$env:BuildDir" -S "$env:SourceDir" -G "$env:CMakeGenerator" -A $env:Platform `
-            -DCMAKE_TOOLCHAIN_FILE="$env:CMakeToolchain" `
-            -DCMAKE_BUILD_TYPE=$env:Configuration
+          set $env:PATH="$env:USERPROFILE/.cargo/bin;$env:PATH"
+          cmake -S "$env:SourceDir" -B "$env:BuildDir" -G Ninja `
+            -DCMAKE_MAKE_PROGRAM=ninja `
+            -DCMAKE_BUILD_TYPE=$env:Configuration `
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache `
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
         shell: pwsh
 
       - name: Generate Self-Signed Certificate
@@ -61,30 +72,35 @@ jobs:
 
       - name: Build UWP App
         run: |
-          msbuild "$env:BuildDir/soh-uwp.sln" `
-            /p:Platform=$env:Platform `
-            /p:Configuration=$env:Configuration `
-            /p:UapAppxPackageBuildMode=$env:BuildMode `
-            /p:AppxBundle=$env:AppxBundle `
-            /p:PackageCertificateThumbprint="${{ env.THUMBPRINT }}" `
-            /p:AppxPackageTestDir="$env:PackageOutputDir" `
-            /p:RestorePackagesConfig=true `
-            /p:AppxPackageSigningEnabled=true
+          cmake --build "$env:BuildDir" --config $env:Configuration --parallel 10
         shell: pwsh    
 
-      - name: List Package Output
+      - name: Package UWP Build
         run: |
-          Write-Host "Listing contents of package output directory:"
-          Get-ChildItem -Path "$env:PackageOutputRootDir" -Recurse -Force
+          mkdir soh-uwp
+          mv "$env:BuildDir/x64/Release/soh.exe" soh-uwp/soh.exe
+          mkdir soh-uwp/debug
+          mkdir soh-uwp/mods
+          New-Item soh-uwp/mods/custom_otr_files_go_here.txt -type file
+          mv "$env:BuildDir/x64/Release/soh.pdb" soh-uwp/debug/soh.pdb
+          mv "$env:SourceDir/README.md" soh-uwp/readme.txt
+          mv "$env:BuildDir/gamecontrollerdb.txt" soh-uwp/gamecontrollerdb.txt
+          mv "$env:BuildDir/x64/Release/assets" soh-uwp
         shell: pwsh
+
+      - name: Download soh.otr
+        uses: actions/download-artifact@v3
+        with:
+          name: soh.otr
+          path: soh-uwp
 
       - name: Create Archive
         run: |
-          Compress-Archive -Path "$env:PackageOutputRootDir\*" -DestinationPath "$env:PackageOutputRootDir\SOH_Archive.zip"
+          Compress-Archive -Path "soh-uwp\*" -DestinationPath "$env:PackageOutputRootDir\SOH_Archive.zip"
         shell: pwsh
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SOH_Archive
+          name: soh-uwp
           path: ${{ env.PackageOutputRootDir }}/SOH_Archive.zip
