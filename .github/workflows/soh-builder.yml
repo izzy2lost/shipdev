@@ -23,7 +23,7 @@ jobs:
       AppxBundle: Never
       CMakeGenerator: Ninja
       VCPKG_ROOT: D:/a/vcpkg
-      SourceDir: "${{ github.workspace }}/soh-uwp"
+      SourceDir: "${{ github.workspace }}/"
       BuildDir: "${{ github.workspace }}/build-uwp"
       PackageOutputRootDir: "${{ github.workspace }}/AppPackages"
       PackageOutputDir: "${{ github.workspace }}/AppPackages/${{ github.event.inputs.package_name }}_${{ github.event.inputs.tag_name }}"
